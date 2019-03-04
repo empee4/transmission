@@ -24,3 +24,5 @@ macosx/en.lproj/*~.nib
 po/*.mo
 /release
 third-party/miniupnp/miniupnpcstrings.h
+libtransmission/rpcimpl.c.bak
+*.bak

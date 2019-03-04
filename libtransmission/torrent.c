@@ -956,6 +956,16 @@ static void torrentInit(tr_torrent* tor, tr_ctor const* ctor)
         tor->incompleteDir = tr_strdup(dir);
     }
 
+    if (!tr_ctorGetSeedDir(ctor, &dir))
+    {
+        dir = tr_sessionGetSeedDir(session);
+    }
+
+    if (tr_sessionIsSeedDirEnabled(session))
+    {
+        tor->seedDir = tr_strdup(dir);
+    }
+
     tr_bandwidthConstruct(&tor->bandwidth, session, &session->bandwidth);
 
     tor->bandwidth.priority = tr_ctorGetBandwidthPriority(ctor);

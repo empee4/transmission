@@ -1924,6 +1924,7 @@ static char const* sessionSet(tr_session* session, tr_variant* args_in, tr_varia
 
     char const* download_dir = NULL;
     char const* incomplete_dir = NULL;
+    char const* seed_dir = NULL;
 
     if (tr_variantDictFindStr(args_in, TR_KEY_download_dir, &download_dir, NULL))
     {
@@ -1938,6 +1939,14 @@ static char const* sessionSet(tr_session* session, tr_variant* args_in, tr_varia
         if (tr_sys_path_is_relative(incomplete_dir))
         {
             return "incomplete torrents directory path is not absolute";
+        }
+    }
+
+    if (tr_variantDictFindStr(args_in, TR_KEY_seed_dir, &seed_dir, NULL))
+    {
+        if (tr_sys_path_is_relative(seed_dir))
+        {
+            return "seed torrents directory path is not absolute";
         }
     }
 
@@ -2019,6 +2028,11 @@ static char const* sessionSet(tr_session* session, tr_variant* args_in, tr_varia
     if (tr_variantDictFindBool(args_in, TR_KEY_download_queue_enabled, &boolVal))
     {
         tr_sessionSetQueueEnabled(session, TR_DOWN, boolVal);
+    }
+
+    if (seed_dir != NULL)
+    {
+        tr_sessionSetSeedDir(session, seed_dir);
     }
 
     if (incomplete_dir != NULL)
@@ -2274,6 +2288,10 @@ static void addSessionField(tr_session* s, tr_variant* d, tr_quark key)
 
     case TR_KEY_download_dir:
         tr_variantDictAddStr(d, key, tr_sessionGetDownloadDir(s));
+        break;
+
+    case TR_KEY_seed_dir:
+        tr_variantDictAddStr(d, key, tr_sessionGetSeedDir(s));
         break;
 
     case TR_KEY_download_dir_free_space:

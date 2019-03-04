@@ -260,6 +260,17 @@ void tr_ctorSetBandwidthPriority(tr_ctor* ctor, tr_priority_t priority);
  */
 tr_priority_t tr_ctorGetBandwidthPriority(tr_ctor const* ctor);
 
+void tr_sessionSetSeedDir(tr_session* session, char const* dir);
+
+/** @brief get the per-session incomplete download folder */
+char const* tr_sessionGetSeedDir(tr_session const* session);
+
+/** @brief enable or disable use of the incomplete download folder */
+void tr_sessionSetSeedDirEnabled(tr_session* session, bool);
+
+/** @brief get whether or not the incomplete download folder is enabled */
+bool tr_sessionIsSeedDirEnabled(tr_session const* session);
+
 /**
  * @brief set the per-session incomplete download folder.
  *

@@ -344,6 +344,8 @@ void tr_sessionGetDefaultSettings(tr_variant* d)
     tr_variantDictAddBool(d, TR_KEY_idle_seeding_limit_enabled, false);
     tr_variantDictAddStr(d, TR_KEY_incomplete_dir, tr_getDefaultDownloadDir());
     tr_variantDictAddBool(d, TR_KEY_incomplete_dir_enabled, false);
+    tr_variantDictAddStr(d, TR_KEY_seed_dir, tr_getDefaultDownloadDir());
+    tr_variantDictAddBool(d, TR_KEY_seed_dir_enabled, false);
     tr_variantDictAddInt(d, TR_KEY_message_level, TR_LOG_INFO);
     tr_variantDictAddInt(d, TR_KEY_download_queue_size, 5);
     tr_variantDictAddBool(d, TR_KEY_download_queue_enabled, true);
@@ -418,6 +420,8 @@ void tr_sessionGetSettings(tr_session* s, tr_variant* d)
     tr_variantDictAddBool(d, TR_KEY_idle_seeding_limit_enabled, tr_sessionIsIdleLimited(s));
     tr_variantDictAddStr(d, TR_KEY_incomplete_dir, tr_sessionGetIncompleteDir(s));
     tr_variantDictAddBool(d, TR_KEY_incomplete_dir_enabled, tr_sessionIsIncompleteDirEnabled(s));
+    tr_variantDictAddStr(d, TR_KEY_seed_dir, tr_sessionGetSeedDir(s));
+    tr_variantDictAddBool(d, TR_KEY_seed_dir_enabled, tr_sessionIsSeedDirEnabled(s));
     tr_variantDictAddInt(d, TR_KEY_message_level, tr_logGetLevel());
     tr_variantDictAddInt(d, TR_KEY_peer_limit_global, s->peerLimit);
     tr_variantDictAddInt(d, TR_KEY_peer_limit_per_torrent, s->peerLimitPerTorrent);
@@ -941,9 +945,19 @@ static void sessionSetImpl(void* vdata)
         tr_sessionSetDownloadDir(session, str);
     }
 
+    if (tr_variantDictFindStr(settings, TR_KEY_seed_dir, &str, NULL))
+    {
+        tr_sessionSetSeedDir(session, str);
+    }
+
     if (tr_variantDictFindStr(settings, TR_KEY_incomplete_dir, &str, NULL))
     {
         tr_sessionSetIncompleteDir(session, str);
+    }
+
+    if (tr_variantDictFindBool(settings, TR_KEY_seed_dir_enabled, &boolVal))
+    {
+        tr_sessionSetSeedDirEnabled(session, boolVal);
     }
 
     if (tr_variantDictFindBool(settings, TR_KEY_incomplete_dir_enabled, &boolVal))
@@ -1214,6 +1228,43 @@ bool tr_sessionIsIncompleteFileNamingEnabled(tr_session const* session)
     TR_ASSERT(tr_isSession(session));
 
     return session->isIncompleteFileNamingEnabled;
+}
+
+/***
+****
+***/
+
+void tr_sessionSetSeedDir(tr_session* session, char const* dir)
+{
+    TR_ASSERT(tr_isSession(session));
+
+    if (session->seedDir != dir)
+    {
+        tr_free(session->seedDir);
+
+        session->seedDir = tr_strdup(dir);
+    }
+}
+
+char const* tr_sessionGetSeedDir(tr_session const* session)
+{
+    TR_ASSERT(tr_isSession(session));
+
+    return session->seedDir;
+}
+
+void tr_sessionSetSeedDirEnabled(tr_session* session, bool b)
+{
+    TR_ASSERT(tr_isSession(session));
+
+    session->isSeedDirEnabled = b;
+}
+
+bool tr_sessionIsSeedDirEnabled(tr_session const* session)
+{
+    TR_ASSERT(tr_isSession(session));
+
+    return session->isSeedDirEnabled;
 }
 
 /***

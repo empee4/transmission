@@ -134,6 +134,9 @@ struct tr_torrent
     /* Where the files will be when it's complete */
     char* downloadDir;
 
+    /* Where the files will be when it's complete */
+    char* seedDir;
+
     /* Where the files are when the torrent is incomplete */
     char* incompleteDir;
 
