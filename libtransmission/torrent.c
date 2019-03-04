@@ -537,6 +537,11 @@ void tr_torrentCheckSeedLimit(tr_torrent* tor)
         {
             (*tor->ratio_limit_hit_func)(tor, tor->ratio_limit_hit_func_user_data);
         }
+
+        if (tor->currentDir == tor->incompleteDir || tor->currentDir == tor->seedDir)
+        {
+            tr_torrentSetLocation(tor, tor->downloadDir, true, NULL, NULL);
+        }
     }
     /* if we're seeding and reach our inactiviy limit, stop the torrent */
     else if (tr_torrentIsSeedIdleLimitDone(tor))
@@ -550,6 +555,11 @@ void tr_torrentCheckSeedLimit(tr_torrent* tor)
         if (tor->idle_limit_hit_func != NULL)
         {
             (*tor->idle_limit_hit_func)(tor, tor->idle_limit_hit_func_user_data);
+        }
+
+        if (tor->currentDir == tor->incompleteDir || tor->currentDir == tor->seedDir)
+        {
+            tr_torrentSetLocation(tor, tor->downloadDir, true, NULL, NULL);
         }
     }
 }
@@ -2324,7 +2334,7 @@ void tr_torrentRecheckCompleteness(tr_torrent* tor)
 
             if (tor->currentDir == tor->incompleteDir)
             {
-                tr_torrentSetLocation(tor, tor->downloadDir, true, NULL, NULL);
+                tr_torrentSetLocation(tor, tor->seedDir, true, NULL, NULL);
             }
         }
 
